@@ -1,13 +1,13 @@
 all: minimalism
 
-minimalism: build/main.o
+minimalism: build/main.o build/cuberenderer.o
 	g++ $^ -lSDL -lGL -o $@
 
 build/%.o: sources/%.cpp
 	mkdir -p build
 	g++ -g -c $< -MD -MF build/$*.d -o build/$*.o
 
-minimalism.html: build-ems/main.o
+minimalism.html: build-ems/main.o build-ems/cuberenderer.o
 	/home/dranke/tmp/emscripten/emcc -O2 -s ASM_JS=1 $^ -o $@
 
 build-ems/%.o: sources/%.cpp

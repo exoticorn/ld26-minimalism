@@ -1,7 +1,8 @@
 /build/
 /build-ems/
 *~
-minimalism
-minimalism.html
-.cproject
-.project
+/minimalism
+/minimalism.html
+/.cproject
+/.project
+/.settings/
