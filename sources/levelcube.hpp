@@ -10,9 +10,10 @@ public:
 	void		update(float timeStep);
 	void		render(CubeRenderer& renderer);
 
-	bool		canBeDeleted() const;
+	bool		canBeDeleted(float camY) const;
 
 private:
+	float		m_size;
 	float		m_posX;
 	float		m_posY;
 	float		m_speedX;

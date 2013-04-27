@@ -128,9 +128,17 @@ CubeRenderer::CubeRenderer() {
 	m_colorUniform = glGetUniformLocation(m_shader, "color");
 	m_sizeUniform = glGetUniformLocation(m_shader, "size");
 	m_projectionUniform = glGetUniformLocation(m_shader, "projection");
+
+	m_cameraX = 0;
+	m_cameraY = 0;
 }
 
 CubeRenderer::~CubeRenderer() {
+}
+
+void CubeRenderer::setCamera(float x, float y) {
+	m_cameraX = x;
+	m_cameraY = y;
 }
 
 void CubeRenderer::render(float x, float y, float size, float r, float g, float b) {
@@ -140,7 +148,7 @@ void CubeRenderer::render(float x, float y, float size, float r, float g, float 
 	glEnableVertexAttribArray(m_normalAttr);
 	glVertexAttribPointer(m_positionAttr, 3, GL_FLOAT, GL_FALSE, 6*4, (void*)0);
 	glVertexAttribPointer(m_normalAttr, 3, GL_FLOAT, GL_FALSE, 6*4, (void*)12);
-	glUniform3f(m_offsetUniform, x, y, 8);
+	glUniform3f(m_offsetUniform, x - m_cameraX, y - m_cameraY, 8);
 	glUniform3f(m_colorUniform, r, g, b);
 	glUniform1f(m_sizeUniform, size);
 	float far = 50;

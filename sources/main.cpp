@@ -1,5 +1,6 @@
 #include "cuberenderer.hpp"
 #include "game.hpp"
+#include "input.hpp"
 
 #include <math.h>
 #include <SDL/SDL.h>
@@ -10,8 +11,9 @@
 
 static bool quit = false;
 static CubeRenderer* pRenderer;
-static Game* pLevel;
+static Game* pGame;
 static Uint32 lastTicks;
+static Input input;
 
 void run();
 
@@ -22,7 +24,10 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 
 	pRenderer = new CubeRenderer();
-	pLevel = new Game();
+	pGame = new Game();
+	input.x = 0;
+	input.y = 0;
+	input.pressed = 0;
 	lastTicks = SDL_GetTicks();
 
 #ifdef EMSCRIPTEN
@@ -43,6 +48,16 @@ void run() {
 		case SDL_QUIT:
 			quit = true;
 			break;
+		case SDL_MOUSEMOTION:
+			input.x = (event.motion.x - 400) / 60.0f;
+			input.y = -(event.motion.y - 300) / 60.0f;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			input.pressed = true;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			input.pressed = false;
+			break;
 		case SDL_KEYDOWN:
 			switch(event.key.keysym.sym) {
 			case SDLK_ESCAPE:
@@ -57,17 +72,12 @@ void run() {
 	float timeStep = (now - lastTicks) / 1000.0f;
 	lastTicks = now;
 
-	pLevel->update(timeStep);
+	pGame->update(timeStep, input);
 
 	glClearColor(0.125f, 0.25f, 0.125f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	pRenderer->render(2, -1+0.2f, 0.2f, 1, 0.4f, 0.4f);
-//	pRenderer->render(2, -2, 1, 1, 1, 1);
-//	static float phase = 0;
-//	phase += timeStep;
-//	pRenderer->render(-1 + sinf(phase) * 2, 2, 1.5f, 0.8f, 0.8f, 1);
 
-	pLevel->render(*pRenderer);
+	pGame->render(*pRenderer);
 
 	SDL_GL_SwapBuffers();
 }

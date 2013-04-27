@@ -10,9 +10,14 @@ public:
 	CubeRenderer();
 	~CubeRenderer();
 
+	void	setCamera(float x, float y);
+
 	void render(float x, float y, float size, float r, float g, float b);
 
 private:
+	float	m_cameraX;
+	float	m_cameraY;
+
 	GLuint	m_vertexBuffer;
 	GLuint	m_shader;
 	GLint	m_positionAttr;

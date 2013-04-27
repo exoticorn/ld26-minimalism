@@ -7,6 +7,7 @@ LevelCube::LevelCube(float x, float y, float sx) {
 	m_speedX = sx;
 	m_pPrev = 0;
 	m_pNext = 0;
+	m_size = 1;
 }
 
 void LevelCube::update(float timeStep) {
@@ -14,13 +15,17 @@ void LevelCube::update(float timeStep) {
 }
 
 void LevelCube::render(CubeRenderer& renderer) {
-	renderer.render(m_posX, m_posY, 1, 0.6f, 0.6f, 1);
+	renderer.render(m_posX, m_posY, m_size, 0.6f, 0.6f, 1);
 }
 
-bool LevelCube::canBeDeleted() const {
-	if(m_speedX < 0 && m_posX < -8)
+bool LevelCube::canBeDeleted(float camY) const {
+	if(m_speedX < 0 && m_posX < -10)
 		return true;
-	if(m_speedX > 0 && m_posX > 8)
+	if(m_speedX > 0 && m_posX > 10)
+		return true;
+	float dy = camY - m_posY;
+	dy = dy < 0 ? -dy : dy;
+	if(dy > 8)
 		return true;
 	return false;
 }
