@@ -65,11 +65,19 @@ static const char* s_vertexShader =
 		"varying" LOWP "vec3 vColor;\n"
 		"attribute vec3 position;\n"
 		"attribute vec3 normal;\n"
+		"uniform vec3 offset;\n"
+		"uniform vec3 color;\n"
+		"uniform float size;\n"
+		"uniform vec4 projection;\n"
 		"void main() {\n"
-		"  gl_Position.xyz = position; gl_Position.w = position.z + 5.0;\n"
-		"  gl_Position.x += 2.0; gl_Position.y -= 2.5;\n"
-		"  float light = clamp(dot(normal, vec3(-0.74, 0.557, -0.371)), 0.0, 1.0);\n"
-		"  vColor = vec3(1.0, 1.0, 0.7) * light;\n"
+		"  gl_Position.xyw = position * size + offset;\n"
+		"  gl_Position.xyz = gl_Position.xyw * projection.xyz;\n"
+		"  gl_Position.z += projection.w;\n"
+		"  float dot = dot(normal, vec3(-0.74, 0.557, -0.371));\n"
+		"  vec3 lightColor = vec3(1.0, 1.0, 0.7) * clamp(dot, 0.0, 1.0);\n"
+		"  lightColor += vec3(0.2, 0.2, 0.4) * clamp(-dot, 0.0, 1.0);\n"
+		"  lightColor += 0.3;\n"
+		"  vColor = color * lightColor;\n"
 		"}";
 
 static const char* s_fragmentShader =
@@ -116,6 +124,10 @@ CubeRenderer::CubeRenderer() {
 
 	m_positionAttr = glGetAttribLocation(m_shader, "position");
 	m_normalAttr = glGetAttribLocation(m_shader, "normal");
+	m_offsetUniform = glGetUniformLocation(m_shader, "offset");
+	m_colorUniform = glGetUniformLocation(m_shader, "color");
+	m_sizeUniform = glGetUniformLocation(m_shader, "size");
+	m_projectionUniform = glGetUniformLocation(m_shader, "projection");
 }
 
 CubeRenderer::~CubeRenderer() {
@@ -128,5 +140,11 @@ void CubeRenderer::render(float x, float y, float size, float r, float g, float 
 	glEnableVertexAttribArray(m_normalAttr);
 	glVertexAttribPointer(m_positionAttr, 3, GL_FLOAT, GL_FALSE, 6*4, (void*)0);
 	glVertexAttribPointer(m_normalAttr, 3, GL_FLOAT, GL_FALSE, 6*4, (void*)12);
+	glUniform3f(m_offsetUniform, x, y, 8);
+	glUniform3f(m_colorUniform, r, g, b);
+	glUniform1f(m_sizeUniform, size);
+	float far = 50;
+	float near = 0.2f;
+	glUniform4f(m_projectionUniform, 0.3f * 4, 0.4f * 4, far/(far-near), -far*near/(far-near));
 	glDrawArrays(GL_TRIANGLES, 0, 12*3);
 }

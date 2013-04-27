@@ -17,6 +17,10 @@ private:
 	GLuint	m_shader;
 	GLint	m_positionAttr;
 	GLint	m_normalAttr;
+	GLint	m_offsetUniform;
+	GLint	m_colorUniform;
+	GLint	m_sizeUniform;
+	GLint	m_projectionUniform;
 };
 
 #endif // CUBERENDERER_HPP
