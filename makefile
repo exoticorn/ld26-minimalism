@@ -16,6 +16,11 @@ build-ems/%.o: sources/%.cpp
 	sed -e "s/^.*\.o:/build-ems\/$*.o:/" build-ems/tmp.d > build-ems/$*.d
 	rm build-ems/tmp.d
 
+publish: minimalism.html
+	cp minimalism.html gh-pages/index.html
+	cd gh-pages && git commit -a -m "new build"
+	cd gh-pages && git push origin gh-pages
+
 clean:
 	rm -rf build
 	rm -rf build-ems

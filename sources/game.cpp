@@ -71,10 +71,7 @@ void Game::update(float timeStep, const Input& input) {
 }
 
 void Game::spawnCube() {
-	const float laneWidth = 3;
-	float start = (int)((m_cameraY - 7) / laneWidth) * laneWidth;
-	int lane = rand() % 14;
-	float y = start + lane * laneWidth;
+	float y = m_cameraY - 7 + frand() * 14;
 
 	float x = frand() * 16 - 8;
 	float sx = frand();
@@ -86,7 +83,7 @@ void Game::spawnCube() {
 	}
 
 	for(LevelCube* pCube = m_pFirstCube; pCube != 0; pCube = pCube->m_pNext)
-		if(abs(pCube->m_posY - y) < 2) {
+		if(abs(pCube->m_posY - y) < (pCube->m_speedX * sx < 0 ? 2.5f : 4)) {
 			float dx = abs(pCube->m_posX - x);
 			if(dx < 3)
 				return;
