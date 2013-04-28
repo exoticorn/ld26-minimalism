@@ -8,8 +8,8 @@
 Game::Game() {
 	m_pFirstCube = 0;
 	m_numCubes = 0;
-	m_pPlayer = new Player(0, -1);
-	push(new LevelCube(0, -3, 0));
+	m_pPlayer = new Player(0, 1);
+	push(new LevelCube(0, 0, 0));
 }
 
 Game::~Game() {
@@ -39,10 +39,7 @@ void Game::update(float timeStep, const Input& input) {
 		else
 			pCube = pCube->m_pNext;
 	}
-	if(m_numCubes < 8) {
-		float dir = frand() < 0.5f ? -1 : 1;
-		push(new LevelCube(dir * -8, frand() * 12 - 3 + m_pPlayer->m_posY, dir * (frand() + 0.5f)));
-	}
+	spawnCube();
 
 	if(m_pPlayer->m_pAttachedCube == 0) {
 		m_pPlayer->updateFree(timeStep);
@@ -55,9 +52,13 @@ void Game::update(float timeStep, const Input& input) {
 				if(abs(dx) > abs(dy)) {
 					m_attachX = dx < 0 ? -minDist : minDist;
 					m_attachY = dy;
+					m_pPlayer->m_normalX = dx < 0 ? -1 : 1;
+					m_pPlayer->m_normalY = 0;
 				} else {
 					m_attachX = dx;
 					m_attachY = dy < 0 ? -minDist : minDist;
+					m_pPlayer->m_normalX = 0;
+					m_pPlayer->m_normalY = dy < 0 ? -1 : 1;
 				}
 			}
 		}
@@ -67,6 +68,27 @@ void Game::update(float timeStep, const Input& input) {
 		m_pPlayer->m_posY = m_pPlayer->m_pAttachedCube->m_posY + m_attachY;
 		m_pPlayer->updateAttached(timeStep, m_pPlayer->m_pAttachedCube->m_speedX, worldInput);
 	}
+}
+
+void Game::spawnCube() {
+	const float laneWidth = 3;
+	float start = (int)((m_cameraY - 6) / laneWidth) * laneWidth;
+	int lane = rand() % 12;
+	float y = start + lane * laneWidth;
+
+	float x = frand() * 16 - 8;
+	float sx = frand() < 0.5f ? 0 : (frand() * 2 - 1);
+	if(abs(y - m_cameraY) < 5) {
+		x = x < 0 ? -8 : 8;
+		sx = (x < 0 ? 1 : -1) * (frand() + 0.5f);
+	}
+
+	for(LevelCube* pCube = m_pFirstCube; pCube != 0; pCube = pCube->m_pNext)
+		if(abs(pCube->m_posY - y) < 2 &&
+				(pCube->m_speedX != 0 || sx != 0 || abs(pCube->m_posX - x) < 4))
+			return;
+
+	push(new LevelCube(x, y, sx));
 }
 
 void Game::render(CubeRenderer& renderer) {

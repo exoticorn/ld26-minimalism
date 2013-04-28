@@ -18,6 +18,8 @@ private:
 	void			push(LevelCube* pCube);
 	LevelCube*		remove(LevelCube* pCube);
 
+	void			spawnCube();
+
 	float			m_aimX;
 	float			m_aimY;
 

@@ -22,6 +22,9 @@ private:
 	float	m_speedX;
 	float	m_speedY;
 
+	float	m_normalX;
+	float	m_normalY;
+
 	bool	m_isAiming;
 	float	m_aimX;
 	float	m_aimY;

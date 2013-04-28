@@ -12,6 +12,8 @@ Player::Player(float x, float y) {
 	m_aimX = 0;
 	m_aimY = 0;
 	m_pAttachedCube = 0;
+	m_normalX = 0;
+	m_normalY = 0;
 }
 
 void Player::updateFree(float timeStep) {
@@ -28,6 +30,12 @@ void Player::updateAttached(float timeStep, float speedX, const Input& input) {
 		m_isAiming = true;
 		m_aimX = input.x - m_posX;
 		m_aimY = input.y - m_posY;
+		float dot = m_aimX * m_normalX + m_aimY * m_normalY;
+		if(dot <= 0.05f) {
+			float f = 0.05f - dot;
+			m_aimX += m_normalX * f;
+			m_aimY += m_normalY * f;
+		}
 	} else if(m_isAiming == true) {
 		m_isAiming = false;
 		m_pAttachedCube = 0;
