@@ -14,6 +14,7 @@ public:
 	void	render(CubeRenderer& renderer);
 
 private:
+	void	getJumpSpeed(float* pX, float* pY) const;
 	LevelCube*	m_pAttachedCube;
 	float	m_size;
 	float	m_posX;
@@ -22,6 +23,8 @@ private:
 	float	m_speedY;
 
 	bool	m_isAiming;
+	float	m_aimX;
+	float	m_aimY;
 
 	friend class Game;
 };
