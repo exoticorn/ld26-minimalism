@@ -6,7 +6,8 @@ class CubeRenderer;
 enum CubeType {
 	CubeType_Sticky,
 	CubeType_Bouncy,
-	CubeType_Shrinking
+	CubeType_Shrinking,
+	CubeType_Harmful
 };
 
 class LevelCube {

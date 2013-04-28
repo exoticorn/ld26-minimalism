@@ -24,7 +24,7 @@ Player::Player(float x, float y) {
 }
 
 void Player::updateFree(float timeStep, const Input& input) {
-	m_speedY -= timeStep * 2;
+	m_speedY -= timeStep * gravity();
 	if(input.pressed) {
 		float sx = input.x - m_posX;
 		float sy = input.y - m_posY;
@@ -49,7 +49,7 @@ void Player::updateFree(float timeStep, const Input& input) {
 		}
 		m_stamina -= timeStep * 0.05f;
 	} else
-		m_stamina = min(1.0f, m_stamina + timeStep * 0.025f);
+		m_stamina = min(1.0f, m_stamina + timeStep * (0.0175f - spaceFactor() * 0.00075f));
 	m_posX += m_speedX * timeStep;
 	m_posY += m_speedY * timeStep;
 	updateParticles(timeStep);
@@ -64,8 +64,8 @@ void Player::updateAttached(float timeStep, float speedX, const Input& input) {
 	m_blockAiming -= timeStep;
 	m_attachedTime += timeStep;
 
-	if(m_attachedTime > (m_normalY + 2) * (m_normalY + 2) * 0.25f)
-		m_stamina += timeStep * (m_normalY - 4) * 0.025f;
+	if(m_attachedTime > (m_normalY + 2) * (m_normalY + 2) * (0.25f - spaceFactor() * 0.1f) && m_posY > 1)
+		m_stamina += timeStep * (m_normalY - 1) * (0.05f + spaceFactor() * 0.03f);
 
 	if(!input.pressed || m_blockAiming <= 0) {
 		m_blockAiming = 0;
@@ -101,12 +101,17 @@ void Player::updateParticles(float timeStep) {
 
 void Player::getJumpSpeed(float* pX, float* pY) const {
 	float l = sqrtf(m_aimX * m_aimX + m_aimY * m_aimY);
-	float speed = l * 1.25f;
-	if(speed > 5) {
-		speed = 5;
+	float speed = l * 1.25f / 5;
+	if(speed > 1) {
+		speed = 1;
 	}
+	speed *= 5 - spaceFactor() * 1.75f;
 	*pX = m_speedX + m_aimX / l * speed;
 	*pY = m_speedY + m_aimY / l * speed;
+}
+
+float Player::spaceFactor() const {
+	return clamp(m_posY / 250, 0.0f, 1.0f);
 }
 
 void Player::render(CubeRenderer& renderer) {
@@ -126,7 +131,7 @@ void Player::render(CubeRenderer& renderer) {
 
 		float timeStep = 0.3f;
 		for(int i = 0; i < 15; ++i) {
-			sy -= timeStep * 2;
+			sy -= timeStep * gravity();
 			px += sx * timeStep;
 			py += sy * timeStep;
 			renderer.render(px, py, 0.1f, 1, 1, 1);

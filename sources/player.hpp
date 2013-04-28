@@ -16,6 +16,8 @@ public:
 private:
 	void	getJumpSpeed(float* pX, float* pY) const;
 	void	updateParticles(float timeStep);
+	float	spaceFactor() const;
+	float	gravity() const { return 2 - spaceFactor(); }
 	LevelCube*	m_pAttachedCube;
 	float	m_size;
 	float	m_posX;

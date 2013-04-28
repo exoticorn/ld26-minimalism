@@ -74,9 +74,6 @@ void run() {
 
 	pGame->update(timeStep, input);
 
-	glClearColor(0.125f, 0.25f, 0.125f, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	pGame->render(*pRenderer);
 
 	SDL_GL_SwapBuffers();

@@ -35,6 +35,9 @@ void LevelCube::render(CubeRenderer& renderer) {
 	case CubeType_Shrinking:
 		renderer.render(m_posX, m_posY, m_size, 0.8f, 0.3f, 0.2f);
 		break;
+	case CubeType_Harmful:
+		renderer.render(m_posX, m_posY, m_size, 1, 1 - fmodf(m_time, 0.5f), 0.25f);
+		break;
 	}
 }
 
