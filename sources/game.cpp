@@ -72,21 +72,32 @@ void Game::update(float timeStep, const Input& input) {
 
 void Game::spawnCube() {
 	const float laneWidth = 3;
-	float start = (int)((m_cameraY - 6) / laneWidth) * laneWidth;
-	int lane = rand() % 12;
+	float start = (int)((m_cameraY - 7) / laneWidth) * laneWidth;
+	int lane = rand() % 14;
 	float y = start + lane * laneWidth;
 
 	float x = frand() * 16 - 8;
-	float sx = frand() < 0.5f ? 0 : (frand() * 2 - 1);
-	if(abs(y - m_cameraY) < 5) {
+	float sx = frand();
+	sx *= sx * sx * sx;
+	sx = sx * 2 - 1;
+	if(abs(y - m_cameraY) < 6.5f) {
 		x = x < 0 ? -8 : 8;
 		sx = (x < 0 ? 1 : -1) * (frand() + 0.5f);
 	}
 
 	for(LevelCube* pCube = m_pFirstCube; pCube != 0; pCube = pCube->m_pNext)
-		if(abs(pCube->m_posY - y) < 2 &&
-				(pCube->m_speedX != 0 || sx != 0 || abs(pCube->m_posX - x) < 4))
-			return;
+		if(abs(pCube->m_posY - y) < 2) {
+			float dx = abs(pCube->m_posX - x);
+			if(dx < 3)
+				return;
+			float dir = pCube->m_posX < x ? -1 : 1;
+			float rs = (sx - pCube->m_speedX) * dir;
+			if(rs > 0) {
+				float t = (dx - 2.5f) / rs;
+				if(abs(pCube->m_posX + t * pCube->m_speedX) < 8)
+					return;
+			}
+		}
 
 	push(new LevelCube(x, y, sx));
 }
