@@ -12,7 +12,9 @@ minimalism.html: build-ems/main.o build-ems/cuberenderer.o build-ems/levelcube.o
 
 build-ems/%.o: sources/%.cpp
 	mkdir -p build-ems
-	/home/dranke/tmp/emscripten/emcc -DEMSCRIPTEN -c $< -MD -MF build-ems/$*.d -o build-ems/$*.o
+	/home/dranke/tmp/emscripten/emcc -DEMSCRIPTEN -c $< -MD -MF build-ems/tmp.d -o build-ems/$*.o
+	sed -e "s/^.*\.o:/build-ems\/$*.o:/" build-ems/tmp.d > build-ems/$*.d
+	rm build-ems/tmp.d
 
 clean:
 	rm -rf build
@@ -21,4 +23,4 @@ clean:
 	rm -f minimalism.html
 
 -include build/*.d
-
+-include build-ems/*.d
