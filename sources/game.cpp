@@ -5,11 +5,13 @@
 #include "input.hpp"
 #include <stdlib.h>
 
+static float minf(float a, float b) { return a < b ? a : b; }
+
 Game::Game() {
 	m_pFirstCube = 0;
 	m_numCubes = 0;
 	m_pPlayer = new Player(0, 1);
-	push(new LevelCube(0, 0, 0));
+	push(new LevelCube(0, 0, 0, CubeType_Sticky));
 }
 
 Game::~Game() {
@@ -33,10 +35,15 @@ void Game::update(float timeStep, const Input& input) {
 	m_aimX = worldInput.x;
 	m_aimY = worldInput.y;
 	for(LevelCube* pCube = m_pFirstCube; pCube != 0;) {
-		pCube->update(timeStep);
-		if(pCube->canBeDeleted(m_cameraY) && pCube != m_pPlayer->m_pAttachedCube)
+		pCube->update(timeStep, m_pPlayer->m_pAttachedCube == pCube);
+		if(pCube->canBeDeleted(m_cameraY)) {
+			if(pCube == m_pPlayer->m_pAttachedCube) {
+				m_pPlayer->m_pAttachedCube = 0;
+				m_pPlayer->m_speedX += m_pPlayer->m_normalX * 4;
+				m_pPlayer->m_speedY += m_pPlayer->m_normalY * 4;
+			}
 			pCube = remove(pCube);
-		else
+		} else
 			pCube = pCube->m_pNext;
 	}
 	spawnCube();
@@ -50,13 +57,13 @@ void Game::update(float timeStep, const Input& input) {
 			if(abs(dx) < minDist && abs(dy) < minDist) {
 				m_pPlayer->m_pAttachedCube = pCube;
 				if(abs(dx) > abs(dy)) {
-					m_attachX = dx < 0 ? -minDist : minDist;
-					m_attachY = dy;
+					m_attachX = dx < 0 ? -1 : 1;
+					m_attachY = dy / pCube->m_size;
 					m_pPlayer->m_normalX = dx < 0 ? -1 : 1;
 					m_pPlayer->m_normalY = 0;
 				} else {
-					m_attachX = dx;
-					m_attachY = dy < 0 ? -minDist : minDist;
+					m_attachX = dx / pCube->m_size;
+					m_attachY = dy < 0 ? -1 : 1;
 					m_pPlayer->m_normalX = 0;
 					m_pPlayer->m_normalY = dy < 0 ? -1 : 1;
 				}
@@ -64,9 +71,19 @@ void Game::update(float timeStep, const Input& input) {
 		}
 	}
 	if(m_pPlayer->m_pAttachedCube != 0) {
-		m_pPlayer->m_posX = m_pPlayer->m_pAttachedCube->m_posX + m_attachX;
-		m_pPlayer->m_posY = m_pPlayer->m_pAttachedCube->m_posY + m_attachY;
-		m_pPlayer->updateAttached(timeStep, m_pPlayer->m_pAttachedCube->m_speedX, worldInput);
+		LevelCube& cube = *m_pPlayer->m_pAttachedCube;
+		m_pPlayer->m_posX = cube.m_posX + m_attachX * cube.m_size + m_pPlayer->m_normalX * m_pPlayer->m_size;
+		m_pPlayer->m_posY = cube.m_posY + m_attachY * cube.m_size + m_pPlayer->m_normalY * m_pPlayer->m_size;
+		if(cube.m_type == CubeType_Bouncy) {
+			float dot = m_pPlayer->m_speedX * m_pPlayer->m_normalX +
+					m_pPlayer->m_speedY * m_pPlayer->m_normalY;
+			if(dot < 0) {
+				m_pPlayer->m_speedX += cube.m_speedX * m_pPlayer->m_normalX * m_pPlayer->m_normalX - 2 * m_pPlayer->m_normalX * dot;
+				m_pPlayer->m_speedY -= 2 * m_pPlayer->m_normalY * dot;
+				m_pPlayer->m_pAttachedCube = 0;
+			}
+		} else
+			m_pPlayer->updateAttached(timeStep, cube.m_speedX, worldInput);
 	}
 }
 
@@ -96,7 +113,13 @@ void Game::spawnCube() {
 			}
 		}
 
-	push(new LevelCube(x, y, sx));
+	CubeType type = CubeType_Sticky;
+	if(frand() < minf(m_cameraY / 300, 0.33f))
+		type = CubeType_Bouncy;
+	else if(frand() < m_cameraY / 100)
+		type = CubeType_Shrinking;
+
+	push(new LevelCube(x, y, sx, type));
 }
 
 void Game::render(CubeRenderer& renderer) {
