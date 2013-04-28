@@ -31,6 +31,9 @@ private:
 	float	m_aimX;
 	float	m_aimY;
 
+	float	m_stamina;
+	float	m_attachedTime;
+
 	enum { NumParticles = 20 };
 	struct Particle {
 		float x, y, dx, dy, lifetime;

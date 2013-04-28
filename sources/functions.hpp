@@ -5,6 +5,7 @@
 
 template <typename T> T min(T a, T b) { return a < b ? a : b; }
 template <typename T> T max(T a, T b) { return a > b ? a : b; }
+template <typename T> T clamp(T v, T a, T b) { return max(a, min(b, v)); }
 
 inline float frand() {
 	return rand() / (float)RAND_MAX;

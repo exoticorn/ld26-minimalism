@@ -123,6 +123,13 @@ void Game::render(CubeRenderer& renderer) {
 	for(LevelCube* pCube = m_pFirstCube; pCube != 0; pCube = pCube->m_pNext)
 		pCube->render(renderer);
 	m_pPlayer->render(renderer);
+
+	renderer.setCamera(0, 0, 2);
+	for(int i = 0; i < 10; ++i) {
+		float alpha = min(m_pPlayer->m_stamina * 10 - i, 1.0f);
+		if(alpha > 0)
+			renderer.render(i * 0.4f - 4.5f, -3, 0.15f, 0.6f, 1 * alpha, 0.6f * alpha);
+	}
 }
 
 void Game::push(LevelCube* pCube) {

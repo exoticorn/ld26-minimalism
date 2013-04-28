@@ -131,14 +131,16 @@ CubeRenderer::CubeRenderer() {
 
 	m_cameraX = 0;
 	m_cameraY = 0;
+	m_cameraZ = 0;
 }
 
 CubeRenderer::~CubeRenderer() {
 }
 
-void CubeRenderer::setCamera(float x, float y) {
+void CubeRenderer::setCamera(float x, float y, float z) {
 	m_cameraX = x;
 	m_cameraY = y;
+	m_cameraZ = z;
 }
 
 void CubeRenderer::render(float x, float y, float size, float r, float g, float b) {
@@ -148,7 +150,7 @@ void CubeRenderer::render(float x, float y, float size, float r, float g, float 
 	glEnableVertexAttribArray(m_normalAttr);
 	glVertexAttribPointer(m_positionAttr, 3, GL_FLOAT, GL_FALSE, 6*4, (void*)0);
 	glVertexAttribPointer(m_normalAttr, 3, GL_FLOAT, GL_FALSE, 6*4, (void*)12);
-	glUniform3f(m_offsetUniform, x - m_cameraX, y - m_cameraY, 8);
+	glUniform3f(m_offsetUniform, x - m_cameraX, y - m_cameraY, 8 - m_cameraZ);
 	glUniform3f(m_colorUniform, r, g, b);
 	glUniform1f(m_sizeUniform, size);
 	float far = 50;

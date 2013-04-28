@@ -19,6 +19,8 @@ Player::Player(float x, float y) {
 	m_particleDelay = 0;
 	for(int i = 0; i < NumParticles; ++i)
 		m_particles[i].lifetime = 0;
+	m_stamina = 1;
+	m_attachedTime = 0;
 }
 
 void Player::updateFree(float timeStep, const Input& input) {
@@ -45,11 +47,14 @@ void Player::updateFree(float timeStep, const Input& input) {
 			m_particles[i].lifetime = 1;
 			m_particleDelay += 0.04f;
 		}
-	}
+		m_stamina -= timeStep * 0.05f;
+	} else
+		m_stamina = min(1.0f, m_stamina + timeStep * 0.025f);
 	m_posX += m_speedX * timeStep;
 	m_posY += m_speedY * timeStep;
 	updateParticles(timeStep);
 	m_blockAiming = 0.25f;
+	m_attachedTime = 0;
 }
 
 void Player::updateAttached(float timeStep, float speedX, const Input& input) {
@@ -57,6 +62,10 @@ void Player::updateAttached(float timeStep, float speedX, const Input& input) {
 	m_speedY = 0;
 
 	m_blockAiming -= timeStep;
+	m_attachedTime += timeStep;
+
+	if(m_attachedTime > (m_normalY + 2) * (m_normalY + 2) * 0.25f)
+		m_stamina += timeStep * (m_normalY - 4) * 0.025f;
 
 	if(!input.pressed || m_blockAiming <= 0) {
 		m_blockAiming = 0;
