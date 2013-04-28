@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Emscripten-Generated Code</title>
+    <link href='http://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        background-color: black;
+        color: #ccc;
+        font-family: 'Noto Sans', sans-serif;
+      }
+      h1 {
+      	text-align: center;
+      }
+      h3 {
+      	text-align: center;
+      }
+      #description {
+      	margin-left: auto;
+      	margin-right: auto;
+      	width: 800px;
+      }
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+/*      textarea.emscripten { font-family: monospace; width: 80%; }
+      div.emscripten { text-align: center; }
+      div.emscripten_border { border: 1px solid black; } */
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten { border: 0px none; }
+    </style>
+  </head>
+  <body>
+  	<h1>I Want To Go To Space Today!</h1>
+  	<h3>A game for Ludum Dare 26 by Dennis Ranke</h2>
+	<canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+	<div id="description">
+		<h2>How to play</h2>
+		<p>You play a cute little cube who really wants to go to space today.
+		To do that you can jump around from cube to cube, automatically holding on to
+		the grey-blue and red cubes. You will bounce off of the green cubes and the yellow ones, well,
+		I guess they don't look exactly inviting, do they?</p>
+		<p>To jump, just press the mouse button, aim, and then release to jump.</p>
+		<p>You can also use your thruster during a jump by pressing the mouse button.</p>
+		<p>But beware! Holding on to cubes and using your thruster uses up stamina.
+		Your stamina regenerates only while your are in the air.</p>
+		<p>If your stamina reaches zero, you die! If your cute little cube leaves the screen, you die!</p>
+		<h2>Display</h2>
+		<p>The stamina meter is on the lower left.</p>
+		<p>On the right there are two score displays: your current score at the bottom,
+		your hiscore (current session only) at the top. Space starts at a height of 250.</p>
+		<h2>Source Code</h2>
+		The source can be found here on GitHub at <a href="http://github.com/exoticorn/ld26-minimalism">http://github.com/exoticorn/ld26-minimalism</a>.
+	</div>
+    <script type='text/javascript'>
+      // connect to canvas
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          console.log(text);
+        },
+        canvas: document.getElementById('canvas'),
+        setStatus: function(text) {
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+        }
+      };
+    </script>      
+    <script type='text/javascript'>
+
+      {{{ SCRIPT_CODE }}}
+
+    </script>
+  </body>
+</html>

@@ -119,7 +119,7 @@ void Game::update(float timeStep, const Input& input) {
 }
 
 void Game::spawnCube() {
-	float y = m_cameraY - 7 + frand() * 14;
+	float y = m_cameraY - 8 + frand() * 16;
 
 	float x = frand() * 16 - 8;
 	float sx = frand();
@@ -194,7 +194,7 @@ void Game::drawNumber(CubeRenderer& renderer, int n, float x, float y) {
 	while(n > 0) {
 		int d = n % 10;
 		n /= 10;
-		renderer.render(x, y, 0.1f, 0, d >= 5 ? 0.8f : 0, 0);
+		renderer.render(x, y, 0.1f, 0, d >= 5 ? 0.8f : 0.25f, 0);
 		d = d % 5;
 		for(int i = 0; i < d; ++i)
 			renderer.render(x, y + 0.25f + i * 0.15f, 0.05f, 0.4f, 1, 1);

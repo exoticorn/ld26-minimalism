@@ -7,8 +7,8 @@ build/%.o: sources/%.cpp
 	mkdir -p build
 	g++ -g -c $< -MD -MF build/$*.d -o build/$*.o
 
-minimalism.html: build-ems/main.o build-ems/cuberenderer.o build-ems/levelcube.o build-ems/game.o build-ems/player.o
-	/home/dranke/tmp/emscripten/emcc -O2 -s ASM_JS=1 $^ -o $@
+minimalism.html: build-ems/main.o build-ems/cuberenderer.o build-ems/levelcube.o build-ems/game.o build-ems/player.o shell.html
+	/home/dranke/tmp/emscripten/emcc --shell-file shell.html -O2 -s ASM_JS=1 $^ -o $@
 
 build-ems/%.o: sources/%.cpp
 	mkdir -p build-ems
