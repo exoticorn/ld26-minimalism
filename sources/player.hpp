@@ -9,12 +9,13 @@ class Player {
 public:
 	Player(float x, float y);
 
-	void	updateFree(float timeStep);
+	void	updateFree(float timeStep, const Input& input);
 	void	updateAttached(float timeStep, float speedX, const Input& input);
 	void	render(CubeRenderer& renderer);
 
 private:
 	void	getJumpSpeed(float* pX, float* pY) const;
+	void	updateParticles(float timeStep);
 	LevelCube*	m_pAttachedCube;
 	float	m_size;
 	float	m_posX;
@@ -26,8 +27,15 @@ private:
 	float	m_normalY;
 
 	bool	m_isAiming;
+	float	m_blockAiming;
 	float	m_aimX;
 	float	m_aimY;
+
+	enum { NumParticles = 20 };
+	struct Particle {
+		float x, y, dx, dy, lifetime;
+	}		m_particles[NumParticles];
+	float	m_particleDelay;
 
 	friend class Game;
 };

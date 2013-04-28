@@ -3,9 +3,8 @@
 #include "player.hpp"
 #include "cuberenderer.hpp"
 #include "input.hpp"
+#include "functions.hpp"
 #include <stdlib.h>
-
-static float minf(float a, float b) { return a < b ? a : b; }
 
 Game::Game() {
 	m_pFirstCube = 0;
@@ -17,10 +16,6 @@ Game::Game() {
 Game::~Game() {
 	while(m_pFirstCube != 0)
 		remove(m_pFirstCube);
-}
-
-static float frand() {
-	return rand() / (float)RAND_MAX;
 }
 
 static float abs(float v) { return v < 0 ? -v : v; }
@@ -49,7 +44,7 @@ void Game::update(float timeStep, const Input& input) {
 	spawnCube();
 
 	if(m_pPlayer->m_pAttachedCube == 0) {
-		m_pPlayer->updateFree(timeStep);
+		m_pPlayer->updateFree(timeStep, worldInput);
 		for(LevelCube* pCube = m_pFirstCube; pCube != 0; pCube = pCube->m_pNext) {
 			float dx = m_pPlayer->m_posX - pCube->m_posX;
 			float dy = m_pPlayer->m_posY - pCube->m_posY;
@@ -114,7 +109,7 @@ void Game::spawnCube() {
 		}
 
 	CubeType type = CubeType_Sticky;
-	if(frand() < minf(m_cameraY / 300, 0.33f))
+	if(frand() < min(m_cameraY / 300, 0.33f))
 		type = CubeType_Bouncy;
 	else if(frand() < m_cameraY / 100)
 		type = CubeType_Shrinking;
