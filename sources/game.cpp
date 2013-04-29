@@ -87,10 +87,10 @@ void Game::update(float timeStep, const Input& input) {
 			m_pPlayer->m_posX = cube.m_posX + m_attachX * cube.m_size + m_pPlayer->m_normalX * (m_pPlayer->m_size + 0.01f);
 			m_pPlayer->m_posY = cube.m_posY + m_attachY * cube.m_size + m_pPlayer->m_normalY * (m_pPlayer->m_size + 0.01f);
 			if(cube.m_type == CubeType_Bouncy || cube.m_type == CubeType_Harmful) {
-				float dot = m_pPlayer->m_speedX * m_pPlayer->m_normalX +
+				float dot = (m_pPlayer->m_speedX - cube.m_speedX) * m_pPlayer->m_normalX +
 						m_pPlayer->m_speedY * m_pPlayer->m_normalY;
 				if(dot < 0) {
-					m_pPlayer->m_speedX += cube.m_speedX * m_pPlayer->m_normalX * m_pPlayer->m_normalX - 2 * m_pPlayer->m_normalX * dot;
+					m_pPlayer->m_speedX -= 2 * m_pPlayer->m_normalX * dot;
 					m_pPlayer->m_speedY -= 2 * m_pPlayer->m_normalY * dot;
 					m_pPlayer->m_pAttachedCube = 0;
 					if(cube.m_type == CubeType_Harmful) {
