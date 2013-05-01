@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Emscripten-Generated Code</title>
+    <title>I Want To Go To Space Today</title>
     <link href='http://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
     <style>
       body {
@@ -55,6 +55,7 @@
 		<ul>
 			<li>28.04.2013: ld48 deadline, initial release</li>
 			<li>29.04.2013: fixed a bug that caused the player to sometimes get stuck on a green bouncy cube</li>
+			<li>01.05.2013: added support for touch input, now the game is playable in mobile firefox on android tablets</li>
 		</ul>
 	</div>
     <script type='text/javascript'>
@@ -80,6 +81,32 @@
           this.totalDependencies = Math.max(this.totalDependencies, left);
         }
       };
+      function generateMouseEvent(type, touchEvent) {
+      	var evt = document.createEvent("MouseEvents");
+      	var touch = touchEvent.changedTouches[0];
+      	evt.initMouseEvent(type, false, false, touchEvent.view, 0,
+      		touch.screenX, touch.screenY, touch.clientX, touch.clientY,
+      		touchEvent.ctrlKey, touchEvent.altKey, touchEvent.shiftKey,
+      		touchEvent.metaKey, 0, null);
+      	Module.canvas.dispatchEvent(evt);
+      }
+      Module.canvas.addEventListener("touchstart", function(evt) {
+      	evt.preventDefault();
+      	generateMouseEvent('mousedown', evt);
+      	generateMouseEvent('mousemove', evt);
+      }, false);
+      Module.canvas.addEventListener("touchend", function(evt) {
+      	evt.preventDefault();
+      	generateMouseEvent('mouseup', evt);
+      }, false);
+      Module.canvas.addEventListener("touchmove", function(evt) {
+      	evt.preventDefault();
+      	generateMouseEvent('mousemove', evt);
+      }, false);
+      Module.canvas.addEventListener("touchcancel", function(evt) {
+      	evt.preventDefault();
+      	generateMouseEvent('mouseup', evt);
+      }, false);
     </script>      
     <script type='text/javascript'>
 
